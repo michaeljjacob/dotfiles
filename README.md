@@ -8,6 +8,11 @@ Personal configuration files for Neovim and tmux, designed for easy setup across
 - `~/.tmux/` (tmux plugins and extra modules)
 - `~/.config/kitty/kitty.conf` (kitty terminal config)
 
+## Development tmux initialization
+
+Custom tmux session setups are in `tmux/init/`.
+For example, to launch the workspace: `~/lucidity_workspace.sh` or run the script directly from `dotfiles/tmux/init/`.
+
 ## Setup
 
 The fastest way: run the provided setup script after cloning:
@@ -15,7 +20,7 @@ The fastest way: run the provided setup script after cloning:
 ./install.sh
 ```
 
-This will automatically update git submodules and symlink all configs to your home directory.
+This will automatically update git submodules and symlink all configs—and tmux init scripts—to your home directory.
 
 ---
 
@@ -29,6 +34,8 @@ ln -sf "$PWD/.config/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf"
 ```
 
 Or use stow/chezmoi/yadm for automation, if preferred.
+
+Symlinks for tmux init scripts are also included.
 
 ## OS compatibility
 These dotfiles are compatible with Linux and macOS; OS-specific config is detected inside the config files as needed.
