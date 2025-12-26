@@ -15,7 +15,10 @@ return {
 				"clangd",
 				"denols",
 				"eslint",
+				"gopls",
+				"pyright",
 			},
+
 		},
 	},
 	{
@@ -105,8 +108,70 @@ return {
 				end,
 			})
 
+			local util = require("lspconfig.util")
 			vim.lsp.config("eslint", {
 				capabilities = capabilities,
+				root_dir = function(bufnr, on_dir)
+					local util = require("lspconfig.util")
+					local fname = vim.api.nvim_buf_get_name(bufnr)
+					-- Disable eslint in Deno projects (prioritize denols)
+					if util.root_pattern("deno.json", "deno.jsonc")(fname) then
+						return
+					end
+					-- Otherwise, use nearest ESLint/Node project root
+					local root = util.root_pattern(".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json", ".eslintrc.yaml", ".eslintrc.yml", "package.json", "tsconfig.json", ".git")(fname)
+					if root then
+						on_dir(root)
+					end
+				end,
+			})
+
+			vim.lsp.config("gopls", {
+				capabilities = capabilities,
+				settings = {
+					gopls = {
+						usePlaceholders = true,
+						staticcheck = true,
+             semanticTokens = true,
+					},
+				},
+				root_dir = function(bufnr, on_dir)
+					local util = require("lspconfig.util")
+					local fname = vim.api.nvim_buf_get_name(bufnr)
+					local root = util.root_pattern("go.work", "go.mod", ".git")(fname)
+					if root then on_dir(root) end
+				end,
+			})
+
+			vim.lsp.config("pyright", {
+				capabilities = capabilities,
+				settings = {
+					python = {
+						analysis = {
+							autoImportCompletions = true,
+							typeCheckingMode = "basic",
+							diagnosticMode = "workspace",
+						},
+					},
+				},
+				root_dir = function(bufnr, on_dir)
+					local util = require("lspconfig.util")
+					local fname = vim.api.nvim_buf_get_name(bufnr)
+					local root = util.root_pattern(
+						"pyproject.toml",
+						"pyrightconfig.json",
+						"setup.cfg",
+						"setup.py",
+						"requirements.txt",
+						".git"
+					)(fname)
+
+					if root then
+						on_dir(root)
+					else
+						on_dir(util.path.dirname(fname))
+					end
+				end,
 			})
 
 			-- Enable the configured servers
@@ -115,7 +180,11 @@ return {
 			vim.lsp.enable("jsonls")
 			vim.lsp.enable("clangd")
 			vim.lsp.enable("denols")
+			-- Disable eslint by default in Deno roots; enable elsewhere via root_dir above
 			vim.lsp.enable("eslint")
+			vim.lsp.enable("gopls")
+			vim.lsp.enable("pyright")
+
 
 			-- Custom keymaps
 			vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
