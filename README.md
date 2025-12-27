@@ -4,38 +4,34 @@ Personal configuration files for Neovim and tmux, designed for easy setup across
 
 ## Managed dotfiles
 - `~/.config/nvim/` (Neovim config)
+- `~/.config/kitty/kitty.conf` (kitty terminal config)
+- `~/.config/ghostty/config` (Ghostty terminal config)
 - `~/.tmux.conf` (tmux config)
 - `~/.tmux/` (tmux plugins and extra modules)
-- `~/.config/kitty/kitty.conf` (kitty terminal config)
+- `~/tmux/init/*.sh` (tmux session bootstrap scripts)
 
 ## Development tmux initialization
 
-Custom tmux session setups are in `tmux/init/`.
-For example, to launch the workspace: `~/lucidity_workspace.sh` or run the script directly from `dotfiles/tmux/init/`.
+Custom tmux session setups live in `tmux-config/tmux/init/`.
+For example, launch the workspace via `~/tmux/lucidity.sh` after stowing, or run it directly from `tmux-config/tmux/init/`.
 
 ## Setup
 
-The fastest way: run the provided setup script after cloning:
+Install GNU Stow first (macOS: `brew install stow`; Debian/Ubuntu: `sudo apt install stow`).
+
+From the repo root:
 ```bash
 ./install.sh
 ```
+This updates git submodules, cleans legacy links pointing at this repo, and restows the managed packages into your home directory.
 
-This will automatically update git submodules and symlink all configs—and tmux init scripts—to your home directory.
-
----
-
-Manual method: Clone this repo, then symlink the managed files to your home directory:
-Clone this repo, then symlink the managed files to your home directory:
+Manual stow, if you prefer:
 ```bash
-ln -sf "$PWD/.config/nvim" "$HOME/.config/nvim"
-ln -sf "$PWD/.tmux.conf" "$HOME/.tmux.conf"
-ln -sf "$PWD/.tmux" "$HOME/.tmux"
-ln -sf "$PWD/.config/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf"
+stow -t "$HOME/.config" -R .config
+stow -t "$HOME" -R tmux-config
+stow -t "$HOME/.tmux" -R .tmux
 ```
-
-Or use stow/chezmoi/yadm for automation, if preferred.
-
-Symlinks for tmux init scripts are also included.
+Use `stow -n` for a dry run before applying; remove any legacy links in `$HOME` if you see conflicts.
 
 ## OS compatibility
 These dotfiles are compatible with Linux and macOS; OS-specific config is detected inside the config files as needed.

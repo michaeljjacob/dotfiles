@@ -1,0 +1,8 @@
+# Ghostty configuration
+font-family = "JetBrainsMono Nerd Font"
+font-size = 14
+cursor-style = block
+window-padding-x = 6
+window-padding-y = 6
+term = xterm-256color
+theme = catppuccin-mocha.conf

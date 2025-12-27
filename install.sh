@@ -3,22 +3,40 @@ set -eu
 
 cd "$(dirname "$0")"
 
+if ! command -v stow >/dev/null 2>&1; then
+  echo "GNU Stow is required (brew install stow | sudo apt install stow)" >&2
+  exit 1
+fi
+
 echo "Updating submodules..."
 git submodule update --init --recursive
 
-echo "Symlinking configs..."
 mkdir -p "$HOME/.config" "$HOME/.tmux"
-ln -sf "$PWD/.config/nvim" "$HOME/.config/nvim"
-ln -sf "$PWD/.tmux.conf" "$HOME/.tmux.conf"
-ln -sf "$PWD/.tmux" "$HOME/.tmux"
-ln -sf "$PWD/.config/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf"
 
-# Symlink any tmux init scripts to ~/tmux
-rm -rf "$HOME/tmux"
-mkdir -p "$HOME/tmux"
-for script in "$PWD/tmux/init"/*.sh; do
-  [ -e "$script" ] && ln -sf "$script" "$HOME/tmux/$(basename "$script")"
-  chmod +x "$script"
+# Clean legacy links pointing to this repo to avoid stow conflicts
+legacy_targets=(
+  "$HOME/.tmux.conf"
+  "$HOME/.tmux"
+  "$HOME/.config/kitty/kitty.conf"
+  "$HOME/.config/nvim"
+  "$HOME/.config/ghostty"
+)
+for target in "${legacy_targets[@]}"; do
+  if [ -L "$target" ]; then
+    link_target=$(readlink "$target")
+    case "$link_target" in
+      "$PWD"/*)
+        echo "Removing legacy link $target -> $link_target"
+        rm "$target"
+        ;;
+    esac
+  fi
 done
 
+echo "Stowing configs..."
+stow -t "$HOME/.config" -R .config
+stow -t "$HOME" -R tmux-config
+stow -t "$HOME/.tmux" -R .tmux
+
 echo "Done!"
+
