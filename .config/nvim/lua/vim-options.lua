@@ -6,6 +6,7 @@ vim.cmd("set number")
 vim.cmd("set relativenumber")
 
 vim.opt.swapfile = false;
+vim.opt.splitright = true;
 
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"

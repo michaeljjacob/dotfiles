@@ -38,5 +38,16 @@ stow -t "$HOME/.config" -R .config
 stow -t "$HOME" -R tmux-config
 stow -t "$HOME/.tmux" -R .tmux
 
+# Symlink tmux init scripts to ~/tmux for convenience
+echo "Linking tmux init scripts..."
+mkdir -p "$HOME/tmux"
+# Remove stale links pointing to old locations
+for script in "$HOME/tmux"/*.sh; do
+  [ -L "$script" ] && [ ! -e "$script" ] && rm "$script"
+done
+for script in "$PWD/tmux-config/tmux/init"/*.sh; do
+  [ -e "$script" ] && ln -sf "$script" "$HOME/tmux/$(basename "$script")"
+done
+
 echo "Done!"
 

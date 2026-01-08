@@ -186,14 +186,26 @@ return {
 			vim.lsp.enable("pyright")
 
 
-			-- Custom keymaps
-			vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
-			vim.keymap.set("n", "gD", vim.lsp.buf.declaration, {})
-			vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
-			vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
-			vim.keymap.set("n", "<leader>e", function()
-				vim.diagnostic.open_float(nil, { focus = false })
-			end, {})
+		-- Custom keymaps
+		vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
+		vim.keymap.set("n", "gD", vim.lsp.buf.declaration, {})
+		vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
+		vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
+		vim.keymap.set("n", "<leader>e", function()
+			vim.diagnostic.open_float(nil, { focus = false })
+		end, {})
+		
+		-- Focus any floating window (LSP hover, diagnostics, etc.)
+		vim.keymap.set("n", "<leader>fw", function()
+			for _, win in ipairs(vim.api.nvim_list_wins()) do
+				local config = vim.api.nvim_win_get_config(win)
+				if config.relative ~= "" then  -- It's a floating window
+					vim.api.nvim_set_current_win(win)
+					return
+				end
+			end
+			vim.notify("No floating window found", vim.log.levels.WARN)
+		end, { desc = "Focus floating window" })
 
 			-- Diagnostic configuration
 			vim.diagnostic.config({
