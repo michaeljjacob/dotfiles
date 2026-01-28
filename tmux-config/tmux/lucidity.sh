@@ -1,1 +1,1 @@
-/Users/michaeljacob/dotfiles/tmux-config/tmux/init/lucidity.sh
+/Users/michael/dotfiles/tmux-config/tmux/init/lucidity.sh

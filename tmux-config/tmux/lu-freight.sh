@@ -1,1 +1,1 @@
-/Users/michaeljacob/dotfiles/tmux-config/tmux/init/lu-freight.sh
+/Users/michael/dotfiles/tmux-config/tmux/init/lu-freight.sh

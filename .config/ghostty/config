@@ -1,6 +1,6 @@
 # Ghostty configuration
-font-family = "Hack Nerd Font"
-font-size = 14
+font-family = "Hack Nerd Font Mono"
+font-size = 14.5
 cursor-style = block
 window-padding-x = 6
 window-padding-y = 6
