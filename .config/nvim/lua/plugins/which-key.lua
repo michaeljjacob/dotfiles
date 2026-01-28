@@ -62,6 +62,7 @@ return {
       { "g", group = "Go to / LSP", icon = "󰞘" },
       { "gd", desc = "Go to definition", icon = "󰼭" },
       { "gD", desc = "Go to declaration", icon = "󰼭" },
+      { "<leader>gsd", desc = "Go to definition in vertical split", icon = "󰼭" },
       { "go", desc = "Add range to opencode", icon = "󰒕", mode = { "n", "x" } },
       { "goo", desc = "Add line to opencode", icon = "󰒕" },
       
