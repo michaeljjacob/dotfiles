@@ -14,7 +14,6 @@ return {
 				"jsonls",
 				"clangd",
 				"denols",
-				"eslint",
 				"gopls",
 				"pyright",
 			},
@@ -108,24 +107,6 @@ return {
 				end,
 			})
 
-			local util = require("lspconfig.util")
-			vim.lsp.config("eslint", {
-				capabilities = capabilities,
-				root_dir = function(bufnr, on_dir)
-					local util = require("lspconfig.util")
-					local fname = vim.api.nvim_buf_get_name(bufnr)
-					-- Disable eslint in Deno projects (prioritize denols)
-					if util.root_pattern("deno.json", "deno.jsonc")(fname) then
-						return
-					end
-					-- Otherwise, use nearest ESLint/Node project root
-					local root = util.root_pattern(".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json", ".eslintrc.yaml", ".eslintrc.yml", "package.json", "tsconfig.json", ".git")(fname)
-					if root then
-						on_dir(root)
-					end
-				end,
-			})
-
 			vim.lsp.config("gopls", {
 				capabilities = capabilities,
 				settings = {
@@ -180,8 +161,6 @@ return {
 			vim.lsp.enable("jsonls")
 			vim.lsp.enable("clangd")
 			vim.lsp.enable("denols")
-			-- Disable eslint by default in Deno roots; enable elsewhere via root_dir above
-			vim.lsp.enable("eslint")
 			vim.lsp.enable("gopls")
 			vim.lsp.enable("pyright")
 
@@ -195,9 +174,16 @@ return {
 			vim.lsp.buf.definition()
 		end, { desc = "Go to definition in vertical split" })
 		vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
-		vim.keymap.set("n", "<leader>e", function()
-			vim.diagnostic.open_float(nil, { focus = false })
-		end, {})
+			vim.keymap.set("n", "<leader>e", function()
+				vim.diagnostic.open_float(nil, { focus = false })
+			end, {})
+
+			vim.api.nvim_create_user_command("LspRestartAll", function()
+				pcall(vim.cmd, "LspRestart")
+				if vim.fn.exists(":NullLsRestart") == 2 then
+					vim.cmd("NullLsRestart")
+				end
+			end, { desc = "Restart LSP clients and none-ls" })
 		
 		-- Focus any floating window (LSP hover, diagnostics, etc.)
 		vim.keymap.set("n", "<leader>fw", function()
